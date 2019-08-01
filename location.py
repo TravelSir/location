@@ -137,7 +137,3 @@ def get_critical_point(distance, lng, lat):
     max_lat = lat + lat_abs
     min_lat = lat - lat_abs
     return max_lng, min_lng, max_lat, min_lat
-
-
-if __name__ == '__main__':
-    print(check_lat(lat_list=[1, 3, 4, -9]))
