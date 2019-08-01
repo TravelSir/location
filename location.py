@@ -1,7 +1,27 @@
 import math
 
-ea = 6378137  # 赤道半径
-eb = 6356725  # 极半径
+EA = 6378137  # 赤道半径
+EB = 6356725  # 极半径
+WRONG_LAT = 'lat must be range -90 to 90'
+WRONG_LNG = 'lng must be range -180 to 180'
+
+
+def check_lat(lat=None, lat_list=[]):
+    if lat and (lat < -90 or lat > 90):
+        return False
+    for l in lat_list:
+        if l < -90 or l > 90:
+            return False
+    return True
+
+
+def check_lng(lng=None, lng_list=[]):
+    if lng and (lng < -180 or lng > 180):
+        return False
+    for l in lng_list:
+        if l < -180 or l > 180:
+            return False
+    return True
 
 
 def _get_correct_radii(lat):
@@ -10,7 +30,9 @@ def _get_correct_radii(lat):
     :param lat: 纬度
     :return: 修正过后的半径
     """
-    return eb + (eb - ea) * (90.0 - lat) / 90.0
+    if not check_lat(lat):
+        return WRONG_LAT
+    return EB + (EB - EA) * (90.0 - lat) / 90.0
 
 
 def _get_radian(degrees):
@@ -56,6 +78,12 @@ def get_distance_by_two_locations(lng1, lat1, lng2, lat2):
     :param lat2: 第二个点的纬度
     :return: distance 距离
     """
+    if not check_lat(lat_list=[lat1, lat2]):
+        return WRONG_LAT
+
+    if not check_lng(lng_list=[lng1, lng2]):
+        return WRONG_LNG
+
     radii = _get_correct_radii(lat1)
 
     # 公式计算用的是弧度，而经纬度是角度，需转换
@@ -86,6 +114,12 @@ def get_critical_point(distance, lng, lat):
     :param lat: 纬度
     :return: max_lng,min_lng,max_lat,min_lat: 经纬度的临界值
     """
+    if not check_lat(lat):
+        return WRONG_LAT
+
+    if not check_lng(lng):
+        return WRONG_LNG
+
     # 首先计算公式左边
     radii = _get_correct_radii(lat)
     tem = _haversin(distance / radii)
@@ -104,3 +138,6 @@ def get_critical_point(distance, lng, lat):
     min_lat = lat - lat_abs
     return max_lng, min_lng, max_lat, min_lat
 
+
+if __name__ == '__main__':
+    print(check_lat(lat_list=[1, 3, 4, -9]))
