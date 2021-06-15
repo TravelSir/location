@@ -16,7 +16,7 @@ class Location:
 
     @property
     def geohash(self) -> str:
-        return encode_location(self.lat, self.lng)
+        return encode_location(self.lng, self.lat)
 
     @staticmethod
     def check_lat(lat: float) -> float:
